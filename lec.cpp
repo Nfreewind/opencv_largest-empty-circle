@@ -116,12 +116,12 @@ int main( int, char ** )
     Mat img(rect.size(), CV_8UC3);
 
     img = Scalar::all(0);
-    string win = "Delaunay Demo";
+    string win = "Largest empty circle";
     imshow(win, img);
 
     std::vector< Point2f > points;
     srand(2013);
-    for ( int i = 0; i < 360; i += 45 )
+    for ( int i = 0; i < 360; i += 1 )
     {
         Point2f fp( (float)( rand() % 35 + rect.width / 4 * cos(2 * 3.1415 * float(i) / 360) + rect.width / 2 ),
                     (float)( rand() % 35 + rect.height / 4 * sin(2 * 3.1415 * float(i) / 360) + rect.height / 2) );
