@@ -1,47 +1,17 @@
+/*
+Largest Empty Circle in OpenCV.
+Author: Alessandro Gentilini
+
+Warning: algorithm is incomplete because it does not consider the candidate centers
+that are the intersections between the Voronoi's edges and the convex hull.
+*/
+
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 
 using namespace cv;
 using namespace std;
-
-
-/*
-static void draw_subdiv_point( Mat& img, Point2f fp, Scalar color )
-{
-    circle( img, fp, 3, color, CV_FILLED, 8, 0 );
-}
-
-static void draw_subdiv( Mat& img, Subdiv2D& subdiv, Scalar delaunay_color )
-{
-#if 1
-    vector<Vec6f> triangleList;
-    subdiv.getTriangleList(triangleList);
-    vector<Point> pt(3);
-
-    for( size_t i = 0; i < triangleList.size(); i++ )
-    {
-        Vec6f t = triangleList[i];
-        pt[0] = Point(cvRound(t[0]), cvRound(t[1]));
-        pt[1] = Point(cvRound(t[2]), cvRound(t[3]));
-        pt[2] = Point(cvRound(t[4]), cvRound(t[5]));
-        line(img, pt[0], pt[1], delaunay_color, 1, CV_AA, 0);
-        line(img, pt[1], pt[2], delaunay_color, 1, CV_AA, 0);
-        line(img, pt[2], pt[0], delaunay_color, 1, CV_AA, 0);
-    }
-#else
-    vector<Vec4f> edgeList;
-    subdiv.getEdgeList(edgeList);
-    for( size_t i = 0; i < edgeList.size(); i++ )
-    {
-        Vec4f e = edgeList[i];
-        Point pt0 = Point(cvRound(e[0]), cvRound(e[1]));
-        Point pt1 = Point(cvRound(e[2]), cvRound(e[3]));
-        line(img, pt0, pt1, delaunay_color, 1, CV_AA, 0);
-    }
-#endif
-}
-*/
 
 static void locate_point( Mat &img, Subdiv2D &subdiv, Point2f fp, Scalar active_color )
 {
@@ -57,22 +27,18 @@ static void locate_point( Mat &img, Subdiv2D &subdiv, Point2f fp, Scalar active_
             Point2f org, dst;
             if ( subdiv.edgeOrg(e, &org) > 0 && subdiv.edgeDst(e, &dst) > 0 )
             {
-                //   line( img, org, dst, active_color, 3, CV_AA, 0 );
             }
 
             e = subdiv.getEdge(e, Subdiv2D::NEXT_AROUND_LEFT);
         }
         while ( e != e0 );
     }
-
-    //draw_subdiv_point( img, fp, active_color );
 }
 
 static float distance( const Point2f &a, const Point2f &b )
 {
     return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 }
-
 
 static void paint_voronoi( Mat &img, Subdiv2D &subdiv, const std::vector<Point2f> &ch )
 {
@@ -121,7 +87,6 @@ static void paint_voronoi( Mat &img, Subdiv2D &subdiv, const std::vector<Point2f
         color[0] = rand() & 255;
         color[1] = rand() & 255;
         color[2] = rand() & 255;
-        //fillConvexPoly(img, ifacet, color, 8, 0);
 
         ifacets[0] = ifacet;
         polylines(img, ifacets, true, Scalar(255, 255, 255), 1, CV_AA, 0);
@@ -172,8 +137,6 @@ int main( int, char ** )
     paint_convexHull(img, ch);
 
     paint_voronoi( img, subdiv, ch );
-
-
 
     imshow( win, img );
 
